@@ -5,13 +5,43 @@ export default class AudioPlayer extends PureComponent {
   constructor(props){
     super(props);
 
-    this._audio = new Audio(this.props.src);
+    const {isPlaying} = props;
 
     this.state = {
-      progress: this._audio.currentTime,
+      progress: 0,
       isLoading: true,
-      isPlaying: false,
+      isPlaying,
     }
+
+    this._audio = null;
+
+    this._onPlayButtonClick = this._onPlayButtonClick.bind(this);
+  }
+
+
+
+  render() {
+    const {isLoading, isPlaying} = this.state;
+
+    return (
+      <>
+        <button
+          className={`track__button track__button--${isPlaying ? `pause` : `play`}`}
+          type="button"
+          disabled={isLoading}
+          onClick={this._onPlayButtonClick}
+        />
+        <div className="track__status">
+          <audio/>
+        </div>
+      </>
+    )
+  }
+
+  componentDidMount() {
+    const {src} = this.props;
+
+    this._audio = new Audio(src);
 
     this._audio.oncanplaythrough = () => this.setState({
       isLoading: false,
@@ -34,31 +64,10 @@ export default class AudioPlayer extends PureComponent {
         progress: this._audio.currentTime
       })
     }
-
-    this._onPlayButtonClick = this._onPlayButtonClick.bind(this);
-
-  }
-
-  render() {
-    const {isLoading, isPlaying} = this.state;
-
-    return (
-      <>
-        <button
-          className={`track__button track__button--${isPlaying ? `pause` : `play`}`}
-          type="button"
-          disabled={isLoading}
-          onClick={this._onPlayButtonClick}
-        />
-        <div className="track__status">
-          <audio/>
-        </div>
-      </>
-    )
   }
 
   componentDidUpdate() {
-    if (this.state.isPlaying) {
+    if (this.props.isPlaying) {
       this._audio.play();
     } else {
       this._audio.pause();
@@ -66,11 +75,14 @@ export default class AudioPlayer extends PureComponent {
   }
 
   _onPlayButtonClick() {
+    this.props.onPlayButtonClick();
     this.setState({isPlaying: !this.state.isPlaying})
   }
 
 }
 
 AudioPlayer.propTypes = {
+  isPlaying: PropTypes.bool.isRequired,
+  onPlayButtonClick: PropTypes.func.isRequired,
   src: PropTypes.string.isRequired,
 }
