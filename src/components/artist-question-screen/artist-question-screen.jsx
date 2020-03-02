@@ -1,9 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import AudioPlayer from "../audio-player/audio-player.jsx";
 
 const ArtistQuestionScreen = ({question, onAnswer}) => {
   const {
     answers,
+    song,
   } = question;
 
   return <section className="game__screen">
