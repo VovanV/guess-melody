@@ -3,6 +3,14 @@ const initialState = {
   mistakes: 0,
 }
 
+const isArtistAnswerCorrect = (userAnswer, question) =>
+  userAnswer.artist === question.song.artist;
+
+const isGenreAnswerCorrect = (userAnswer, question) =>
+  userAnswer.every((it, i) => it === (
+    question.answers[i].genre === question.genre
+  ));
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'INCREMENT_STEP': return Object.assign({}, state, {
@@ -16,4 +24,8 @@ const reducer = (state = initialState, action) => {
   return state;
 }
 
-export {reducer};
+export {
+  isArtistAnswerCorrect,
+  isGenreAnswerCorrect,
+  reducer,
+};
