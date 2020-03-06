@@ -6,7 +6,7 @@ import {ActionCreator} from "../../reducer";
 import WelcomeScreen from "../welcome-screen/welcome-screen.jsx";
 import ArtistQuestionScreen from "../artist-question-screen/artist-question-screen.jsx";
 import QuestionGenreScreen from "../genre-question-screen/genre-question-screen.jsx";
-import withActivePlayer from "../../hocs/with-active-player";
+import withActivePlayer from "../../hocs/with-active-player/with-active-player";
 
 const QuestionGenreScreenWrapped = withActivePlayer(QuestionGenreScreen);
 
