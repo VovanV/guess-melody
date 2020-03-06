@@ -17,29 +17,43 @@ const Type = {
 class App extends Component{
   _getScreen(question){
     const {
-      errorCount,
+      masMistakes,
       gameTime,
       onWelcomeScreenClick,
     } = this.props;
 
     if (!question){
       return <WelcomeScreen
-        errorCount={errorCount}
+        errorCount={maxMistakes}
         gameTime={gameTime}
         onClick={onWelcomeScreenClick}
       />
     }
 
-    const {onUserAnswer} = this.props;
+    const {
+      onUserAnswer,
+      mistakes,
+      maxMistakes
+    } = this.props;
 
     switch (question.type){
       case `genre`: return <QuestionGenreScreen
         question={question}
-        onAnswer={(userAnswer) => onUserAnswer(userAnswer, question)}
+        onAnswer={(userAnswer) => onUserAnswer(
+          userAnswer,
+          question,
+          mistakes,
+          maxMistakes
+        )}
       />
       case `artist`: return <ArtistQuestionScreen
         question={question}
-        onAnswer={(userAnswer) => onUserAnswer(userAnswer, question)}
+        onAnswer={(userAnswer) => onUserAnswer(
+          userAnswer,
+          question,
+          mistakes,
+          maxMistakes
+        )}
       />
     }
   }
@@ -49,7 +63,6 @@ class App extends Component{
       step,
     } = this.props;
 
-    console.log(question);
     return <section className={`game ${Type.ARTIST}`}>
       <header className="game__header">
         <a className="game__back" href="#">
@@ -65,7 +78,8 @@ class App extends Component{
 }
 
 App.propTypes = {
-  errorCount: Proptypes.number.isRequired,
+  mistakes: Proptypes.number.isRequired,
+  maxMistakes: Proptypes.number.isRequired,
   gameTime: Proptypes.number.isRequired,
   questions: Proptypes.array.isRequired,
   step: Proptypes.number.isRequired,
@@ -81,9 +95,14 @@ const mapStateToProps = (state, ownProps) => Object.assign({}, ownProps, {
 const mapDispatchToProps = (dispatch) => ({
   onWelcomeScreenClick: () => {dispatch(ActionCreator.incrementStep())},
 
-  onUserAnswer: (userAnswer, question) => {
+  onUserAnswer: (userAnswer, question, mistakes, maxMistakes) => {
     dispatch(ActionCreator.incrementStep());
-    dispatch(ActionCreator.incrementMistake(userAnswer, question));
+    dispatch(ActionCreator.incrementMistake(
+      userAnswer,
+      question,
+      mistakes,
+      maxMistakes
+      ));
   }
 })
 

@@ -8,7 +8,7 @@ import {reducer} from "./reducer";
 
 const gameSettings = {
   gameTime: 5,
-  errorCount: 3,
+  errorCount: 1,
 };
 
 const init = (gameQuestions) => {
@@ -17,7 +17,7 @@ const init = (gameQuestions) => {
 
   ReactDOM.render(<Provider store={store}>
       <App
-      errorCount={errorCount}
+      maxMistakes={errorCount}
       gameTime={gameTime}
       questions={gameQuestions}
       />
