@@ -11,7 +11,7 @@ const isGenreAnswerCorrect = (userAnswer, question) =>
     question.answers[i].genre === question.genre
   ));
 
-const ActionCreator = {
+const   ActionCreator = {
   incrementStep: () => ({
     type: `INCREMENT_STEP`,
     payload: 1,
