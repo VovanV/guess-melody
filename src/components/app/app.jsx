@@ -6,9 +6,10 @@ import {ActionCreator} from "../../reducer";
 import WelcomeScreen from "../welcome-screen/welcome-screen.jsx";
 import ArtistQuestionScreen from "../artist-question-screen/artist-question-screen.jsx";
 import QuestionGenreScreen from "../genre-question-screen/genre-question-screen.jsx";
-import withActivePlayer from "../../hocs/with-active-player/with-active-player";
+import withActivePlayer from "../hocs/with-active-player/with-active-player";
+import withUserAnswer from "../hocs/with-user-answer/with-user-answer";
 
-const QuestionGenreScreenWrapped = withActivePlayer(QuestionGenreScreen);
+const QuestionGenreScreenWrapped = withUserAnswer(withActivePlayer(QuestionGenreScreen));
 
 const Type = {
   ARTIST: `game--artist`,
@@ -19,7 +20,6 @@ const Type = {
 class App extends Component{
   _getScreen(question){
     const {
-      masMistakes,
       gameTime,
       onWelcomeScreenClick,
     } = this.props;
@@ -40,6 +40,7 @@ class App extends Component{
 
     switch (question.type){
       case `genre`: return <QuestionGenreScreenWrapped
+        answers={question.answers}
         question={question}
         onAnswer={(userAnswer) => onUserAnswer(
           userAnswer,
