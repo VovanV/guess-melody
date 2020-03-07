@@ -5,7 +5,14 @@ import AudioPlayer from "../audio-player/audio-player.jsx";
 class GenreQuestionScreen extends PureComponent {
 
   render() {
-    const {activePlayer, question, onAnswer, onPlayButtonClick} = this.props;
+    const {
+      activePlayer,
+      question,
+      onAnswer,
+      renderPlayer,
+      userAnswer
+    } = this.props;
+
     const {
       answers,
       genre
@@ -19,11 +26,7 @@ class GenreQuestionScreen extends PureComponent {
         onAnswer();
       }}>
         {answers.map((it, i) => <div className="track" key={`answer-${i}`}>
-          <AudioPlayer
-            src={it.src}
-            isPlaying={i === activePlayer}
-            onPlayButtonClick={()=> onPlayButtonClick(i)}
-          />
+          {renderPlayer(it,i)}
           <div className="game__answer">
             <input
               checked={userAnswer[i]}
