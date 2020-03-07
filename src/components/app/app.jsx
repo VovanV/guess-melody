@@ -1,15 +1,23 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import Proptypes from "prop-types";
+import PropTypes from "prop-types";
 
 import {ActionCreator} from "../../reducer";
-import WelcomeScreen from "../welcome-screen/welcome-screen.jsx";
 import ArtistQuestionScreen from "../artist-question-screen/artist-question-screen.jsx";
 import QuestionGenreScreen from "../genre-question-screen/genre-question-screen.jsx";
+import WelcomeScreen from "../welcome-screen/welcome-screen.jsx";
 import withActivePlayer from "../hocs/with-active-player/with-active-player";
+import withTransformProps from "../hocs/with-transform-props/with-transform-props";
 import withUserAnswer from "../hocs/with-user-answer/with-user-answer";
 
-const QuestionGenreScreenWrapped = withUserAnswer(withActivePlayer(QuestionGenreScreen));
+const QuestionGenreScreenWrapped = withUserAnswer(
+  withActivePlayer(
+    withTransformProps((props) => {
+      return Object.assign({}, props, {
+        renderAnswer: props.renderPlayer,
+      });
+    })(QuestionGenreScreen)));
+
 
 const Type = {
   ARTIST: `game--artist`,
@@ -17,28 +25,29 @@ const Type = {
 };
 
 
-class App extends Component{
-  _getScreen(question){
-    const {
-      gameTime,
-      onWelcomeScreenClick,
-    } = this.props;
+class App extends Component {
+  _getScreen(question) {
+    if (!question) {
+      const {
+        maxMistakes,
+        gameTime,
+        onWelcomeScreenClick,
+      } = this.props;
 
-    if (!question){
       return <WelcomeScreen
         errorCount={maxMistakes}
         gameTime={gameTime}
         onClick={onWelcomeScreenClick}
-      />
+      />;
     }
 
     const {
       onUserAnswer,
       mistakes,
-      maxMistakes
+      maxMistakes,
     } = this.props;
 
-    switch (question.type){
+    switch (question.type) {
       case `genre`: return <QuestionGenreScreenWrapped
         answers={question.answers}
         question={question}
@@ -48,7 +57,8 @@ class App extends Component{
           mistakes,
           maxMistakes
         )}
-      />
+      />;
+
       case `artist`: return <ArtistQuestionScreen
         question={question}
         onAnswer={(userAnswer) => onUserAnswer(
@@ -57,9 +67,12 @@ class App extends Component{
           mistakes,
           maxMistakes
         )}
-      />
+      />;
     }
+
+    return null;
   }
+
   render() {
     const {
       questions,
@@ -73,30 +86,54 @@ class App extends Component{
           <img className="game__logo" src="img/melody-logo-ginger.png" alt="Угадай мелодию" />
         </a>
 
+        <svg xmlns="http://www.w3.org/2000/svg" className="timer" viewBox="0 0 780 780">
+          <circle className="timer__line" cx="390" cy="390" r="370"
+                  style={{
+                    filter: `url(#blur)`,
+                    transform: `rotate(-90deg) scaleY(-1)`,
+                    transformOrigin: `center`
+                  }}
+          />
+        </svg>
+
+        <div className="timer__value" xmlns="http://www.w3.org/1999/xhtml">
+          <span className="timer__mins">05</span>
+          <span className="timer__dots">:</span>
+          <span className="timer__secs">00</span>
+        </div>
+
+        <div className="game__mistakes">
+          <div className="wrong"/>
+          <div className="wrong"/>
+          <div className="wrong"/>
+        </div>
       </header>
+
       {this._getScreen(questions[step])}
     </section>;
   }
-
 }
+
 
 App.propTypes = {
-  mistakes: Proptypes.number.isRequired,
-  maxMistakes: Proptypes.number.isRequired,
-  gameTime: Proptypes.number.isRequired,
-  questions: Proptypes.array.isRequired,
-  step: Proptypes.number.isRequired,
-  onUserAnswer: Proptypes.func.isRequired,
-  onWelcomeScreenClick: Proptypes.func.isRequired
-}
+  mistakes: PropTypes.number.isRequired,
+  maxMistakes: PropTypes.number.isRequired,
+  gameTime: PropTypes.number.isRequired,
+  questions: PropTypes.array.isRequired,
+  step: PropTypes.number.isRequired,
+  onUserAnswer: PropTypes.func.isRequired,
+  onWelcomeScreenClick: PropTypes.func.isRequired,
+};
+
 
 const mapStateToProps = (state, ownProps) => Object.assign({}, ownProps, {
   step: state.step,
   mistakes: state.mistakes,
-})
+});
+
 
 const mapDispatchToProps = (dispatch) => ({
-  onWelcomeScreenClick: () => {dispatch(ActionCreator.incrementStep())},
+  onWelcomeScreenClick: () => dispatch(ActionCreator.incrementStep()),
 
   onUserAnswer: (userAnswer, question, mistakes, maxMistakes) => {
     dispatch(ActionCreator.incrementStep());
@@ -105,9 +142,9 @@ const mapDispatchToProps = (dispatch) => ({
       question,
       mistakes,
       maxMistakes
-      ));
+    ));
   }
-})
+});
 
 export {App};
 

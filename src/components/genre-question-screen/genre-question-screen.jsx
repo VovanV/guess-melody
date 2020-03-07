@@ -1,23 +1,21 @@
-import React, {PureComponent} from "react"
+import React, {PureComponent} from "react";
 import PropTypes from "prop-types";
-import AudioPlayer from "../audio-player/audio-player.jsx";
+
 
 class GenreQuestionScreen extends PureComponent {
-
   render() {
     const {
-      activePlayer,
       question,
       onAnswer,
-      renderPlayer,
-      userAnswer
+      onChange,
+      renderAnswer,
+      userAnswer,
     } = this.props;
 
     const {
       answers,
-      genre
+      genre,
     } = question;
-
 
     return <section className="game__screen">
       <h2 className="game__title">Выберите {genre} треки</h2>
@@ -26,7 +24,7 @@ class GenreQuestionScreen extends PureComponent {
         onAnswer();
       }}>
         {answers.map((it, i) => <div className="track" key={`answer-${i}`}>
-          {renderPlayer(it,i)}
+          {renderAnswer(it, i)}
           <div className="game__answer">
             <input
               checked={userAnswer[i]}
@@ -49,19 +47,21 @@ class GenreQuestionScreen extends PureComponent {
   }
 }
 
+
 GenreQuestionScreen.propTypes = {
-  activePlayer: PropTypes.number.isRequired,
   onAnswer: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
-  onPlayButtonClick: PropTypes.func.isRequired,
+  renderAnswer: PropTypes.func.isRequired,
   question: PropTypes.shape({
     answers: PropTypes.arrayOf(PropTypes.shape({
       src: PropTypes.string.isRequired,
-      genre: PropTypes.oneOf([`pop`,`rock`, `jazz`, `blues`]).isRequired
-    })),
-    genre: PropTypes.oneOf([`pop`,`rock`, `jazz`, `blues`]).isRequired,
+      genre: PropTypes.oneOf([`rock`, `jazz`, `blues`]).isRequired,
+    })).isRequired,
+    genre: PropTypes.oneOf([`rock`, `jazz`, `blues`]).isRequired,
     type: PropTypes.oneOf([`genre`, `artist`]).isRequired,
   }).isRequired,
+  userAnswer: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
+
 
 export default GenreQuestionScreen;
